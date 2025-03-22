@@ -1,6 +1,5 @@
 package edu.icet.mos.dto;
 
-import edu.icet.mos.util.ProductType;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -10,12 +9,11 @@ import lombok.ToString;
 @AllArgsConstructor
 @NoArgsConstructor
 @ToString
-public class Product {
+public class OrderedProduct {
     private Long id;
-    private String name;
-    private Double price;
-    private Double discount;
-    private ProductType type;
+    private Long orderId;
+    private Long productId;
     private Integer quantity;
-    private String imageUrl;
+    private Double discount;
+    private Double price;
 }
