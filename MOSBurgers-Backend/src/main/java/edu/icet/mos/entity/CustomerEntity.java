@@ -1,4 +1,4 @@
-package edu.icet.crn.entity;
+package edu.icet.mos.entity;
 
 
 import jakarta.persistence.*;

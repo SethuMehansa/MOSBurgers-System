@@ -1,4 +1,4 @@
-package edu.icet.crn.dto;
+package edu.icet.mos.dto;
 
 
 import lombok.*;

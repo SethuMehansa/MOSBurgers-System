@@ -1,7 +1,7 @@
-package edu.icet.crn.controller;
+package edu.icet.mos.controller;
 
-import edu.icet.crn.dto.Customer;
-import edu.icet.crn.service.CustomerService;
+import edu.icet.mos.dto.Customer;
+import edu.icet.mos.service.CustomerService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
