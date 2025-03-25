@@ -3,10 +3,7 @@ package edu.icet.mos.controller;
 import edu.icet.mos.dto.Order;
 import edu.icet.mos.service.OrderService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -21,5 +18,10 @@ public class OrderController {
     @GetMapping("/get-all")
     public List<Order> getAll(){
         return orderService.getAll();
+    }
+    @PostMapping("/place-order")
+    public void placeOrder(@RequestBody Order order) {
+        System.out.println("Received Order: " + order);
+        orderService.addOrder(order);
     }
 }

@@ -17,6 +17,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -36,15 +37,13 @@ public class OrderServiceImpl implements OrderService {
 
         for (OrderedProduct orderedProduct : order.getProducts()) {
             OrderedProductEntity orderedProductEntity = mapper.map(orderedProduct, OrderedProductEntity.class);
+            ProductEntity product = productRepository.findById(orderedProduct.getProductId()).orElseThrow(() -> new RuntimeException(orderedProduct.getProductId() + "Not Found!"));
 
-            ProductEntity productEntity = productRepository.findById(orderedProduct.getProductId())
-                    .orElseThrow(() -> new RuntimeException("Item not found with ID: " + orderedProduct.getProductId()));
-
-            productEntity.updateStock(orderedProduct.getQuantity());
-            productRepository.save(productEntity);
+            product.updateStock(orderedProduct.getQuantity());
+            productRepository.save(product);
 
             orderedProductEntity.setOrder(orderEntity);
-            orderedProductEntity.setItem(productEntity);
+            orderedProductEntity.setProduct(product);
 
             orderedProductRepository.save(orderedProductEntity);
         }
@@ -69,5 +68,20 @@ public class OrderServiceImpl implements OrderService {
             orders.add(newOrder);
         }
         return orders;
+    }
+
+    @Override
+    public Long getLastOrderId() {
+        List<OrderEntity> orderEntities = orderRepository.findAll();
+        if (orderEntities.isEmpty()) {
+            return 100001L;
+        }
+        Long lastOrderId = 100001L;
+        for (OrderEntity order : orderEntities) {
+            if (order.getId() > lastOrderId) {
+                lastOrderId = order.getId();
+            }
+        }
+        return lastOrderId;
     }
 }

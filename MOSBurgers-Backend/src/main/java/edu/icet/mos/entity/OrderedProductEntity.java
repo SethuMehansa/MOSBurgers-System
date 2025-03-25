@@ -1,5 +1,6 @@
 package edu.icet.mos.entity;
 
+import edu.icet.mos.dto.Order;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -23,7 +24,7 @@ public class OrderedProductEntity {
 
     @ManyToOne
     @JoinColumn(name = "item_id", nullable = false)
-    private ProductEntity item;
+    private ProductEntity product;
 
     private Integer quantity;
     private Double discount;
