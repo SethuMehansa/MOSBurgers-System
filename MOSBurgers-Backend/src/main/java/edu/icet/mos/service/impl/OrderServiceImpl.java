@@ -31,13 +31,32 @@ public class OrderServiceImpl implements OrderService {
 
 
     @Override
+    @Transactional
     public void addOrder(Order order) {
+        System.out.println("Received Order DTO: " + order);
+
         OrderEntity orderEntity = mapper.map(order, OrderEntity.class);
-        orderRepository.save(orderEntity);
+
+        // Ensure the list is initialized
+        if (orderEntity.getProducts() == null) {
+            orderEntity.setProducts(new ArrayList<>());
+        }
+
+        System.out.println("Mapped OrderEntity: " + orderEntity);
+
+        List<OrderedProductEntity> orderedProductEntities = new ArrayList<>();
+
+        if (order.getProducts() == null || order.getProducts().isEmpty()) {
+            throw new RuntimeException("Order products are null or empty!");
+        }
 
         for (OrderedProduct orderedProduct : order.getProducts()) {
+            System.out.println("Processing Ordered Product: " + orderedProduct);
+
             OrderedProductEntity orderedProductEntity = mapper.map(orderedProduct, OrderedProductEntity.class);
-            ProductEntity product = productRepository.findById(orderedProduct.getProductId()).orElseThrow(() -> new RuntimeException(orderedProduct.getProductId() + "Not Found!"));
+
+            ProductEntity product = productRepository.findById(orderedProduct.getProductId())
+                    .orElseThrow(() -> new RuntimeException(orderedProduct.getProductId() + " Not Found!"));
 
             product.updateStock(orderedProduct.getQuantity());
             productRepository.save(product);
@@ -45,9 +64,17 @@ public class OrderServiceImpl implements OrderService {
             orderedProductEntity.setOrder(orderEntity);
             orderedProductEntity.setProduct(product);
 
-            orderedProductRepository.save(orderedProductEntity);
+            orderedProductEntities.add(orderedProductEntity);
         }
+
+        orderEntity.setProducts(orderedProductEntities);
+
+        System.out.println("Final OrderEntity before saving: " + orderEntity);
+
+        orderRepository.save(orderEntity);
     }
+
+
 
     @Override
     public List<Order> getAll() {

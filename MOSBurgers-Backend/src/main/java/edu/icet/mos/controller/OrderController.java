@@ -24,4 +24,9 @@ public class OrderController {
         System.out.println("Received Order: " + order);
         orderService.addOrder(order);
     }
+
+    @GetMapping("/last-order-id")
+    public Long getLastOrderId() {
+        return orderService.getLastOrderId();
+    }
 }

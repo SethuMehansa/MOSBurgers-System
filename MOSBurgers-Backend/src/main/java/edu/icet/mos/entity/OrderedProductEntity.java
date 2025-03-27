@@ -29,4 +29,15 @@ public class OrderedProductEntity {
     private Integer quantity;
     private Double discount;
     private Double price;
+
+    @Override
+    public String toString() {
+        return "OrderedProductEntity{" +
+                "id=" + id +
+                ", product=" + (product != null ? product.getId() : "null") + // Print only product ID
+                ", quantity=" + quantity +
+                ", discount=" + discount +
+                ", price=" + price +
+                '}';
+    }
 }
