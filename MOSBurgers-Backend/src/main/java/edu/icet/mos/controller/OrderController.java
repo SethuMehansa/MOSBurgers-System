@@ -28,8 +28,12 @@ public class OrderController {
         return new ResponseEntity<>(savedOrder, HttpStatus.CREATED);
     }
 
-    @GetMapping("/last-order-id")
-    public Long getLastOrderId() {
-        return orderService.getLastOrderId();
+    @DeleteMapping("/delete-order/{id}")
+    public void deleteCustomer(@PathVariable Long id) {
+        orderService.deleteOrder(id);
+    }
+    @GetMapping("/get-all-ordered-products-by-order-id/{id}")
+    public List<Order> getAllOrderedProducts(@PathVariable Long id){
+        return orderService.getAllOrderedProducts(id);
     }
 }

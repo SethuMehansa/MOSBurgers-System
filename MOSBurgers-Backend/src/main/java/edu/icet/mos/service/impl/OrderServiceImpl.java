@@ -92,17 +92,31 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public Long getLastOrderId() {
-        List<OrderEntity> orderEntities = orderRepository.findAll();
-        if (orderEntities.isEmpty()) {
-            return 100001L;
-        }
-        Long lastOrderId = 100001L;
-        for (OrderEntity order : orderEntities) {
-            if (order.getId() > lastOrderId) {
-                lastOrderId = order.getId();
-            }
-        }
-        return lastOrderId;
+    public void deleteOrder(Long id) {
+        orderRepository.deleteById(id);
     }
+
+    @Override
+    public List<Order> getAllOrderedProducts(Long orderId) {
+        // Fetch the OrderEntity by ID
+        OrderEntity orderEntity = orderRepository.findById(orderId)
+                .orElseThrow(() -> new RuntimeException("Order not found"));
+
+        // Fetch the ordered products for this specific order
+        List<OrderedProductEntity> orderedProductEntities = orderedProductRepository.findByOrderId(orderId);
+
+        // Map the order and its ordered products to the Order DTO
+        Order order = mapper.map(orderEntity, Order.class);
+
+        // Map the ordered products to OrderedProduct DTO and add them to the order
+        List<OrderedProduct> orderedProducts = new ArrayList<>();
+        for (OrderedProductEntity orderedProductEntity : orderedProductEntities) {
+            orderedProducts.add(mapper.map(orderedProductEntity, OrderedProduct.class));
+        }
+
+        order.setProducts(orderedProducts);
+        return List.of(order); // Returning a list with one order object containing its ordered products
+    }
+
+
 }

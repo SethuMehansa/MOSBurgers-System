@@ -8,5 +8,6 @@ import java.util.List;
 public interface OrderService {
     OrderEntity placeOrder(Order order);
     List<Order> getAll();
-    Long getLastOrderId();
+    void deleteOrder(Long id);
+    List<Order> getAllOrderedProducts(Long id);
 }
