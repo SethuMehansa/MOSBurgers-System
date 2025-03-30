@@ -1,6 +1,7 @@
 package edu.icet.mos.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import edu.icet.mos.dto.OrderedProduct;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -24,20 +25,13 @@ public class OrderEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private Date date;
+
     private Long customerId;
     private Double totalPrice;
 
-    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL)
+    @JsonManagedReference
     private List<OrderedProductEntity> products = new ArrayList<>();
 
-    @Override
-    public String toString() {
-        return "OrderEntity{" +
-                "id=" + id +
-                ", date=" + date +
-                ", customerId=" + customerId +
-                ", totalPrice=" + totalPrice +
-                // Avoid printing products here
-                '}';
-    }
+
 }

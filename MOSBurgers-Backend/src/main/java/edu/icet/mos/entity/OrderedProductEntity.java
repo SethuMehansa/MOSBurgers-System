@@ -1,5 +1,6 @@
 package edu.icet.mos.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import edu.icet.mos.dto.Order;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -20,24 +21,16 @@ public class OrderedProductEntity {
 
     @ManyToOne
     @JoinColumn(name = "order_id", nullable = false)
+    @JsonBackReference
     private OrderEntity order;
 
     @ManyToOne
-    @JoinColumn(name = "item_id", nullable = false)
+    @JoinColumn(name = "product_id", nullable = false)
     private ProductEntity product;
 
     private Integer quantity;
     private Double discount;
     private Double price;
 
-    @Override
-    public String toString() {
-        return "OrderedProductEntity{" +
-                "id=" + id +
-                ", product=" + (product != null ? product.getId() : "null") + // Print only product ID
-                ", quantity=" + quantity +
-                ", discount=" + discount +
-                ", price=" + price +
-                '}';
-    }
+
 }

@@ -17,5 +17,6 @@ public class Product {
     private Double discount;
     private ProductType type;
     private Integer quantity;
-    private String imageUrl;
+    private String image;
+
 }

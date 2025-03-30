@@ -15,6 +15,7 @@ import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
+import java.sql.Date;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -32,48 +33,43 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     @Transactional
-    public void addOrder(Order order) {
-        System.out.println("Received Order DTO: " + order);
+    public OrderEntity placeOrder(Order order) {
+        System.out.println(order);
+        // 1. Create and save OrderEntity first
+        OrderEntity orderEntity = new OrderEntity();
+        orderEntity.setDate(new Date(System.currentTimeMillis()));
+        orderEntity.setCustomerId(order.getCustomerId());
+        orderEntity.setTotalPrice(order.getTotalPrice());
 
-        OrderEntity orderEntity = mapper.map(order, OrderEntity.class);
+        orderEntity = orderRepository.save(orderEntity); // Save the order first to get an ID
 
-        // Ensure the list is initialized
-        if (orderEntity.getProducts() == null) {
-            orderEntity.setProducts(new ArrayList<>());
-        }
-
-        System.out.println("Mapped OrderEntity: " + orderEntity);
-
+        // 2. Convert ordered products to entities
         List<OrderedProductEntity> orderedProductEntities = new ArrayList<>();
+        for (OrderedProduct op : order.getProducts()) {
+            OrderedProductEntity orderedProductEntity = new OrderedProductEntity();
 
-        if (order.getProducts() == null || order.getProducts().isEmpty()) {
-            throw new RuntimeException("Order products are null or empty!");
-        }
+            // Fetch the product entity
+            ProductEntity productEntity = productRepository.findById(op.getProductId())
+                    .orElseThrow(() -> new RuntimeException("Product not found"));
 
-        for (OrderedProduct orderedProduct : order.getProducts()) {
-            System.out.println("Processing Ordered Product: " + orderedProduct);
+            // Update stock
+            productEntity.updateStock(op.getQuantity());
+            productRepository.save(productEntity);
 
-            OrderedProductEntity orderedProductEntity = mapper.map(orderedProduct, OrderedProductEntity.class);
-
-            ProductEntity product = productRepository.findById(orderedProduct.getProductId())
-                    .orElseThrow(() -> new RuntimeException(orderedProduct.getProductId() + " Not Found!"));
-
-            product.updateStock(orderedProduct.getQuantity());
-            productRepository.save(product);
-
+            // Set order and product references
             orderedProductEntity.setOrder(orderEntity);
-            orderedProductEntity.setProduct(product);
+            orderedProductEntity.setProduct(productEntity);
+            orderedProductEntity.setQuantity(op.getQuantity());
+            orderedProductEntity.setDiscount(op.getDiscount());
+            orderedProductEntity.setPrice(op.getPrice());
 
             orderedProductEntities.add(orderedProductEntity);
         }
 
+        // Save ordered products
         orderEntity.setProducts(orderedProductEntities);
-
-        System.out.println("Final OrderEntity before saving: " + orderEntity);
-
-        orderRepository.save(orderEntity);
+        return orderRepository.save(orderEntity); // Save again to persist ordered products
     }
-
 
 
     @Override

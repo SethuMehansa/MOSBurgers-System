@@ -1,8 +1,11 @@
 package edu.icet.mos.controller;
 
 import edu.icet.mos.dto.Order;
+import edu.icet.mos.entity.OrderEntity;
 import edu.icet.mos.service.OrderService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -20,9 +23,9 @@ public class OrderController {
         return orderService.getAll();
     }
     @PostMapping("/place-order")
-    public void placeOrder(@RequestBody Order order) {
-        System.out.println("Received Order: " + order);
-        orderService.addOrder(order);
+    public ResponseEntity<OrderEntity> placeOrder(@RequestBody Order order) {
+        OrderEntity savedOrder = orderService.placeOrder(order);
+        return new ResponseEntity<>(savedOrder, HttpStatus.CREATED);
     }
 
     @GetMapping("/last-order-id")

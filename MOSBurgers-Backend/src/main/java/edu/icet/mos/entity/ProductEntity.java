@@ -25,7 +25,7 @@ public class ProductEntity {
     @Enumerated(EnumType.STRING)
     private ProductType type;
     private Integer quantity;
-    private String imageUrl;
+    private String image;
 
     public void updateStock(Integer quantity) {
         if (this.quantity < quantity) {
