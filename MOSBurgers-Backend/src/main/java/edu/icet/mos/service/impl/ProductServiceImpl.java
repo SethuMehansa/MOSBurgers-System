@@ -2,7 +2,6 @@ package edu.icet.mos.service.impl;
 
 import edu.icet.mos.dto.Product;
 import edu.icet.mos.entity.ProductEntity;
-import edu.icet.mos.repository.CustomerRepository;
 import edu.icet.mos.repository.ProductRepository;
 import edu.icet.mos.service.ProductService;
 import lombok.RequiredArgsConstructor;

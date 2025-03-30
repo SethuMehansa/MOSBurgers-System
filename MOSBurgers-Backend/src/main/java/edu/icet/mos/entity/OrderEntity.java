@@ -1,8 +1,6 @@
 package edu.icet.mos.entity;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
-import edu.icet.mos.dto.OrderedProduct;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;

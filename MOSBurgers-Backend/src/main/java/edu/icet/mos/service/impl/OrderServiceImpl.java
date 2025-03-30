@@ -9,7 +9,6 @@ import edu.icet.mos.repository.OrderRepository;
 import edu.icet.mos.repository.OrderedProductRepository;
 import edu.icet.mos.repository.ProductRepository;
 import edu.icet.mos.service.OrderService;
-import edu.icet.mos.service.OrderedProductService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
@@ -18,7 +17,6 @@ import org.springframework.stereotype.Service;
 import java.sql.Date;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor

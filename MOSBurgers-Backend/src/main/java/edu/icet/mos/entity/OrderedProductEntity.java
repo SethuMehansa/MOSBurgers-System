@@ -1,7 +1,6 @@
 package edu.icet.mos.entity;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
-import edu.icet.mos.dto.Order;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
