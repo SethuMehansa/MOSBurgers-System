@@ -3,6 +3,8 @@ package edu.icet.mos.controller;
 import edu.icet.mos.dto.Product;
 import edu.icet.mos.service.ProductService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -14,32 +16,51 @@ import java.util.List;
 @RequestMapping("/product")
 @RequiredArgsConstructor
 @CrossOrigin
-public class ProductController{
+public class ProductController {
 
     final ProductService productService;
 
     @PostMapping("/add-product")
-    public void addProduct(@RequestPart Product product, @RequestPart MultipartFile image) throws IOException {
-        if (image != null && !image.isEmpty()) {
-            product.setImage(Base64.getEncoder().encodeToString(image.getBytes())); // Convert to Base64 string
+    public ResponseEntity<Void> addProduct(@RequestPart Product product, @RequestPart MultipartFile image) throws IOException {
+        try {
+            if (image != null && !image.isEmpty()) {
+                product.setImage(Base64.getEncoder().encodeToString(image.getBytes()));
+            }
+            productService.addProduct(product);
+            return new ResponseEntity<>(HttpStatus.CREATED);
+        } catch (Exception e) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
-
-        productService.addProduct(product);
     }
 
 
     @GetMapping("/get-all")
-    public List<Product> getAll() {
-        return productService.getAll();
+    public ResponseEntity<List<Product>> getAll() {
+        try {
+            List<Product> products = productService.getAll();
+            return new ResponseEntity<>(products, HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 
     @PutMapping("/update-product/{id}")
-    public void updateProduct(@RequestBody Product product) {
-        productService.updateProduct(product);
+    public ResponseEntity<Void> updateProduct(@PathVariable Long id, @RequestBody Product product) {
+        try {
+            productService.updateProduct(product);
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        } catch (Exception e) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
     }
 
     @DeleteMapping("/delete-product/{id}")
-    public void deleteProduct(@PathVariable Long id) {
-        productService.deleteProduct(id);
+    public ResponseEntity<Void> deleteProduct(@PathVariable Long id) {
+        try {
+            productService.deleteProduct(id);
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        } catch (Exception e) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
     }
 }

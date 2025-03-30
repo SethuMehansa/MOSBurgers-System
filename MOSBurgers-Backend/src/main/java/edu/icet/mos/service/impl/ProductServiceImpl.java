@@ -23,7 +23,7 @@ public class ProductServiceImpl implements ProductService {
         ProductEntity productEntity = modelMapper.map(product, ProductEntity.class);
 
         if (product.getImage() != null && !product.getImage().isEmpty()) {
-            productEntity.setImage(Base64.getDecoder().decode(product.getImage())); // Convert from Base64 to byte[]
+            productEntity.setImage(Base64.getDecoder().decode(product.getImage()));
         }
 
         productRepository.save(productEntity);
@@ -39,7 +39,7 @@ public class ProductServiceImpl implements ProductService {
         productEntities.forEach(productEntity -> {
             Product product = modelMapper.map(productEntity, Product.class);
             if (productEntity.getImage() != null) {
-                product.setImage(Base64.getEncoder().encodeToString(productEntity.getImage())); // Convert byte[] to Base64
+                product.setImage(Base64.getEncoder().encodeToString(productEntity.getImage()));
             }
             products.add(product);
         });

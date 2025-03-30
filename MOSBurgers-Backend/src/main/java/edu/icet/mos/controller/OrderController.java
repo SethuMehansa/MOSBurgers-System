@@ -18,22 +18,46 @@ public class OrderController {
 
     final OrderService orderService;
 
+
     @GetMapping("/get-all")
-    public List<Order> getAll(){
-        return orderService.getAll();
-    }
-    @PostMapping("/place-order")
-    public ResponseEntity<OrderEntity> placeOrder(@RequestBody Order order) {
-        OrderEntity savedOrder = orderService.placeOrder(order);
-        return new ResponseEntity<>(savedOrder, HttpStatus.CREATED);
+    public ResponseEntity<List<Order>> getAll() {
+        try {
+            List<Order> orders = orderService.getAll();
+            return new ResponseEntity<>(orders, HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 
-    @DeleteMapping("/delete-order/{id}")
-    public void deleteCustomer(@PathVariable Long id) {
-        orderService.deleteOrder(id);
+    @PostMapping("/place-order")
+    public ResponseEntity<OrderEntity> placeOrder(@RequestBody Order order) {
+        try {
+            OrderEntity savedOrder = orderService.placeOrder(order);
+            return new ResponseEntity<>(savedOrder, HttpStatus.CREATED);
+        } catch (Exception e) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
     }
+
+
+    @DeleteMapping("/delete-order/{id}")
+    public ResponseEntity<Void> deleteOrder(@PathVariable Long id) {
+        try {
+            orderService.deleteOrder(id);
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        } catch (Exception e) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+    }
+
+
     @GetMapping("/get-all-ordered-products-by-order-id/{id}")
-    public List<Order> getAllOrderedProducts(@PathVariable Long id){
-        return orderService.getAllOrderedProducts(id);
+    public ResponseEntity<List<Order>> getAllOrderedProducts(@PathVariable Long id) {
+        try {
+            List<Order> orderedProducts = orderService.getAllOrderedProducts(id);
+            return new ResponseEntity<>(orderedProducts, HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
     }
 }

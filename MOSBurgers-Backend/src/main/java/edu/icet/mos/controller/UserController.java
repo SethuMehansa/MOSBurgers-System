@@ -3,6 +3,8 @@ package edu.icet.mos.controller;
 import edu.icet.mos.dto.User;
 import edu.icet.mos.service.UserService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -10,15 +12,26 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 @CrossOrigin
 public class UserController {
+
   private final UserService userService;
 
   @PostMapping("/signup")
-    public void signUp(@RequestBody User user){
+  public ResponseEntity<Void> signUp(@RequestBody User user) {
+    try {
       userService.signUp(user);
+      return new ResponseEntity<>(HttpStatus.CREATED);
+    } catch (Exception e) {
+      return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+    }
   }
 
   @PostMapping("/login")
-    public boolean logIn(@RequestBody User user){
-      return userService.logIn(user.getEmail(),user.getPassword());
+  public ResponseEntity<Boolean> logIn(@RequestBody User user) {
+    try {
+      boolean isAuthenticated = userService.logIn(user.getEmail(), user.getPassword());
+      return new ResponseEntity<>(isAuthenticated, HttpStatus.OK);
+    } catch (Exception e) {
+      return new ResponseEntity<>(false, HttpStatus.UNAUTHORIZED);
+    }
   }
 }

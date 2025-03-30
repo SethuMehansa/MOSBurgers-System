@@ -3,6 +3,8 @@ package edu.icet.mos.controller;
 import edu.icet.mos.dto.Customer;
 import edu.icet.mos.service.CustomerService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -15,32 +17,47 @@ public class CustomerController {
 
     final CustomerService customerService;
 
+
     @PostMapping("/add-customer")
-    public void addCustomer(@RequestBody Customer customer) {
-        customerService.addCustomer(customer);
+    public ResponseEntity<Void> addCustomer(@RequestBody Customer customer) {
+        try {
+            customerService.addCustomer(customer);
+            return new ResponseEntity<>(HttpStatus.CREATED);
+        } catch (Exception e) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
     }
+
 
     @GetMapping("/get-all")
-    public List<Customer> getAllCustomers() {
-        return customerService.getAll();
+    public ResponseEntity<List<Customer>> getAllCustomers() {
+        try {
+            List<Customer> customers = customerService.getAll();
+            return new ResponseEntity<>(customers, HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
+
 
     @PutMapping("/update-customer/{id}")
-    public void updateCustomer(@RequestBody Customer customer) {
-        customerService.updateCustomer(customer);
+    public ResponseEntity<Void> updateCustomer(@PathVariable Long id, @RequestBody Customer customer) {
+        try {
+            customerService.updateCustomer(customer);
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        } catch (Exception e) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
     }
+
 
     @DeleteMapping("/delete-customer/{id}")
-    public void deleteCustomer(@PathVariable Long id) {
-        customerService.deleteCustomer(id);
+    public ResponseEntity<Void> deleteCustomer(@PathVariable Long id) {
+        try {
+            customerService.deleteCustomer(id);
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        } catch (Exception e) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
     }
-
-//    @GetMapping("/get-customer-by-contact/{contact}")
-//    public Customer getCustomerByContact(@PathVariable String contact) {
-//        return customerService.getCustomerByContact(contact);
-//    }
-//    @GetMapping("/get-customer-by-name/{name}")
-//    public List<Customer> getCustomerByName(@PathVariable String name) {
-//        return customerService.getCustomerByName(name);
-//    }
 }
