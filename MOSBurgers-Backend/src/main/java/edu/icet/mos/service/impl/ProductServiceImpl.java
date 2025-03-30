@@ -9,6 +9,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.List;
 
 @Service
@@ -20,17 +21,32 @@ public class ProductServiceImpl implements ProductService {
     @Override
     public void addProduct(Product product) {
         ProductEntity productEntity = modelMapper.map(product, ProductEntity.class);
-        System.out.println("Mapped ProductEntity: " + productEntity);  // Debug log
+
+        if (product.getImage() != null && !product.getImage().isEmpty()) {
+            productEntity.setImage(Base64.getDecoder().decode(product.getImage())); // Convert from Base64 to byte[]
+        }
+
         productRepository.save(productEntity);
     }
+
+
 
     @Override
     public List<Product> getAll() {
         List<ProductEntity> productEntities = productRepository.findAll();
         List<Product> products = new ArrayList<>();
-        productEntities.forEach(productEntity -> products.add(modelMapper.map(productEntity, Product.class)));
+
+        productEntities.forEach(productEntity -> {
+            Product product = modelMapper.map(productEntity, Product.class);
+            if (productEntity.getImage() != null) {
+                product.setImage(Base64.getEncoder().encodeToString(productEntity.getImage())); // Convert byte[] to Base64
+            }
+            products.add(product);
+        });
+
         return products;
     }
+
 
     @Override
     public void updateProduct(Product product) {

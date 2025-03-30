@@ -15,8 +15,9 @@ public class Product {
     private String name;
     private Double price;
     private Double discount;
-    private ProductType type;
+    private String type;
     private Integer quantity;
-    private String imageUrl;
+   private String image;
+//    private byte[] image;
 
 }

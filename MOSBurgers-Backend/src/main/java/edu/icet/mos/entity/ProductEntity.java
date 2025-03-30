@@ -22,10 +22,15 @@ public class ProductEntity {
     private Double price;
     private Double discount;
 
-    @Enumerated(EnumType.STRING)
-    private ProductType type;
+
+    private String type;
     private Integer quantity;
-    private String imageUrl;
+//    private String imageUrl;
+
+    @Lob
+    @Column(columnDefinition = "LONGBLOB")
+    private byte[] image;
+
 
     public void updateStock(Integer quantity) {
         if (this.quantity < quantity) {
