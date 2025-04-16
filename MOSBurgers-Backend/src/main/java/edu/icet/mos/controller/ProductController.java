@@ -45,15 +45,31 @@ public class ProductController {
     }
 
     @PutMapping("/update-product/{id}")
-    public ResponseEntity<Void> updateProduct(@PathVariable Long id, @RequestBody Product product) {
+    public ResponseEntity<Void> updateProduct(
+            @PathVariable Long id,
+            @RequestPart("product") Product updatedProduct,
+            @RequestPart(value = "image", required = false) MultipartFile image) throws IOException {
         try {
-            productService.updateProduct(product);
+            // Get the existing product from the database
+            Product existingProduct = productService.getProductById(id);
+
+            // Update fields (excluding image if not provided)
+            existingProduct.setName(updatedProduct.getName());
+            existingProduct.setPrice(updatedProduct.getPrice());
+            // ... update other fields as needed
+
+            // Only update image if a new one is provided
+            if (image != null && !image.isEmpty()) {
+                existingProduct.setImage(Base64.getEncoder().encodeToString(image.getBytes()));
+            }
+            // Otherwise, the existing image remains unchanged
+
+            productService.updateProduct(existingProduct);
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         } catch (Exception e) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
-
     @DeleteMapping("/delete-product/{id}")
     public ResponseEntity<Void> deleteProduct(@PathVariable Long id) {
         try {
